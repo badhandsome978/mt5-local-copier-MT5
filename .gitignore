@@ -1,0 +1,27 @@
+# Local runtime data and test output (never publish account snapshots/settings).
+*.log
+*.snapshot
+*.control
+*.status
+*.desktop.lock
+*.settings
+desktop-ui-fixture/
+LocalCopier.backup.*/
+
+# Editors and build intermediates.
+.vs/
+.vscode/
+*.user
+*.suo
+*.pdb
+*.obj
+*.o
+bin/
+obj/
+core_tests
+core_tests.exe
+DesktopUITest.exe
+self-test-report.txt
+TestResults/
+
+# .ex5, the root EXE and downloads are intentionally versioned for end users.

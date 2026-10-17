@@ -1,0 +1,12 @@
+* text=auto
+*.cs text eol=crlf
+*.ps1 text eol=crlf
+*.mq5 text eol=crlf
+*.mqh text eol=crlf
+*.cpp text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+LICENSE text eol=lf
+*.exe binary
+*.ex5 binary
+*.zip binary

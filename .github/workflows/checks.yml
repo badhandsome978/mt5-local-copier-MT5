@@ -1,0 +1,39 @@
+name: Offline checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    name: Shared core tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and test shared MQL/C++ core
+        run: |
+          g++ -std=c++17 -O2 -Wall -Wextra -Werror tests/core_tests.cpp -o core_tests
+          ./core_tests
+
+  desktop:
+    name: Windows build and isolated self-test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build desktop app with committed EA binaries
+        shell: pwsh
+        run: ./Desktop/Build.ps1
+      - name: Run offline self-test (no MT5 connection)
+        shell: pwsh
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP 'MT5Copier-self-test.txt'
+          $exe = Join-Path $env:GITHUB_WORKSPACE 'MT5Copier.exe'
+          $process = Start-Process -FilePath $exe -ArgumentList @('--self-test', ('"' + $report + '"')) -WindowStyle Hidden -Wait -PassThru
+          if (-not (Test-Path -LiteralPath $report)) { throw 'Missing self-test report' }
+          $result = Get-Content -LiteralPath $report -Raw
+          Write-Output $result
+          if ($process.ExitCode -ne 0 -or $result -notmatch '^PASS:') { throw 'Desktop self-test failed' }
